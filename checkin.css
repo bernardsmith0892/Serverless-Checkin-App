@@ -1,0 +1,94 @@
+html, body {
+        height: 100%;
+        margin: 0px;
+		background-color: powderblue;
+}
+
+#chartdiv {
+  width: 70%;
+  height: 80%;
+}
+
+/* Styling for popup menus */
+.box{
+    float:left;
+    margin-right:10px;
+	height: 85%;
+	width: 28%;
+    margin: 0px;
+}
+.clear{
+    clear:both;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 40%;
+  position: relative;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+/* Styling for top navbar */
+/* Add a black background color to the top navigation */
+.topnav {
+background-color: #333;
+overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+	color: white;
+}
+
+.topnav a.title {
+	float: left;
+	background-color: #333;
+}
+
+.topnav a.button {
+	float: right;
+	background-color: orange;	
+}
+
+.topnav a.button:hover{
+	background-color: #9400D3;
+}
