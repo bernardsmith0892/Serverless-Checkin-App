@@ -4,9 +4,28 @@ html, body {
 		background-color: powderblue;
 }
 
-#chartdiv {
-  width: 70%;
-  height: 80%;
+/* Styling for tables */
+th, td{
+	border: 1px solid black;
+	padding: 8px;
+	background-color: white;
+}
+th{
+	background-color: orange;
+}
+
+table{
+	max-width: 100%;
+	height: auto;
+	text-align: center;
+}
+
+.good{
+	background-color: lightgreen;
+}
+
+.late{
+	background-color: tomato;
 }
 
 /* Styling for popup menus */
@@ -86,9 +105,27 @@ overflow: hidden;
 
 .topnav a.button {
 	float: right;
+	color: black;
 	background-color: orange;	
 }
 
 .topnav a.button:hover{
-	background-color: #9400D3;
+	background-color: darkorange;
 }
+
+button.checkin {
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+	font-size: 17px;
+	float: center;
+	color: black;
+	background-color: orange;
+	border-radius: 15px;
+}
+
+button.checkin:hover{
+	background-color: darkorange;
+}
+
+

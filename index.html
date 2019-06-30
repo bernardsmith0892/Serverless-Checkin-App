@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html>
 <font face = "helvetica,arial">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- CSS and Icon Include -->
 <head>
 <link rel="stylesheet" type="text/css" href="checkin.css">
 <link rel="shortcut icon" href="favicon.ico" />
-<title>NSEC Checkin</title>
+<title>NSEC Check-in</title>
 </head>
-
-
 
 <!-- Webpage Code -->
 <body>
 
 <nav class="topnav">
-	<a class="title"><b>NSEC Checkin</b></a>
-	<a class="button" href="#settings">Settings</a>
+	<a class="title"><b>NSEC Check-in</b></a>
+	<a class="button" id="login" href="https://nsec-checkin.auth.us-east-1.amazoncognito.com/login?response_type=token&client_id=jl5grlk9nu8ltc2r94bbslj06&redirect_uri=https://dmvy87rq5xw4m.cloudfront.net/index.html">Login / Sign-up</a>
 	<a class="button" href="#about">About</a>
 </nav>
-
 <br>
+
+<!-- Fetch and Output the Checkin Table -->
+<center>
+	<div id="checkinTable" class="col-md-6"> </div>
+</center>
+<br><br>
+
+<!-- Function to Checkin -->
+<center>
+	<button id="checkinButton" class="checkin" hidden=true onclick="checkIn()"><b>Check-in for today.</b></button>
+</center>
 
 <!-- ********************
      * About Menu Popup *
@@ -30,25 +39,20 @@
 		<h2>About</h2>
 		<a class="close" href="#">&times;</a>
 		<div class="content">
-			<p> Insert content here! </p>
+			<p>How to use:</p>
+			<ul>
+			  <li>Wake-up.</li>
+			  <li>Login.</li>
+			  <li>Click the check-in button. <font size="1">(It actually checks you in as soon as you login, but you can press the button to be double-sure.)</font></li>
+			  <li>Verify that it accepted your check-in. <font size="1">(It pulls the list of check-ins every 10 seconds.)</font></li>
+			  <li>If there's an issue, send a text to the WhatsApp for now and let me know about it.</li>
+			</ul>
+			<p><b>Warning:</b> The login tokens only last for an hour, so you have to login every morning.</p>
 		</div>
 	</div>
 </div>
-
-<!-- ***********************
-     * Settings Menu Popup *
-     *********************** -->
-<div id="settings" class="overlay">
-	<div class="popup">
-		<h2>Settings</h2>
-		<a class="close" href="#">&times;</a>
-		<div class="content">
-			<p> Insert content here! </p>
-		</div>
-	</div>
-</div>
-
 
 </body>
 
+<script src="js/checkin-table.js"></script>
 </html>
