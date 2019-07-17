@@ -2,40 +2,73 @@
 var banner_motd = '<b><p style="width:60%">You are accessing a (notional) U.S. Government information system. Information system usage may be monitored, recorded, and subject to audit. Unauthorized use of the information system is prohibited and subject to criminal and civil penalties. Use of the information system indicates consent to monitoring and recording. Authorized use of the system only includes accessing and updating data the user is authorized access to.<br><br>This <code>banner motd</code> is for educational purposes only and is not actually binding for any legal purpose.</p></b>';
 
 /*
-	Verify that the user is logged in. Checks for any parameters and checks that the expiration date in the id_token has not passed.
+	Verify that the user is logged in. Checks for any parameters and checks that the expiration date in the refresh_token has not passed.
 	
 	Otherwise, it informs the user to login.
 */
-if(window.location.href.split('#')[1] != undefined || document.cookie.length > 0){
+if(window.location.href.split('?')[1] != undefined || document.cookie.includes('refresh_token')){
+	var refresh_token;
 	var id_token;
+	var auth_code;
+	var params;
 	
-	try{
-		id_token = (";" + document.cookie).split(";Authorization=")[1].split(";")[0];
-		var id_data = JSON.parse(atob(id_token.split('.')[1]));
-	}
-	catch(err){
-		var params = window.location.href.split('#')[1].split('&');
-		id_token = params[0].split('=')[1];
-		var id_data = JSON.parse(atob(id_token.split('.')[1]));
-		var access_token = JSON.parse(atob(params[1].split('=')[1].split('.')[1]));
-	}
+	
+	// Grab the refresh token from the cookies, if it exists, and fetches an ID token.
+	if( document.cookie.includes('refresh_token') ){
+		refresh_token = (";" + document.cookie).split(";refresh_token=")[1].split(";")[0];
 		
-	if(id_data['exp'] === undefined || id_data['exp'] * 1000 <= new Date()){
-		document.getElementById('checkinTable').innerHTML = banner_motd;
-	}
+		// Fetch the id token using the refresh token
+		fetch('https://auth.nsec-checkin.brndjsmith.net/oauth2/token', 
+		{
+		method: 'POST',
+		headers: {
+//            'Authorization': 'Basic amw1Z3JsazludThsdGMycjk0YmJzbGowNjo=',
+			'Content-Type': 'application/x-www-form-urlencoded'
+        },
+		body: 'grant_type=refresh_token&client_id=jl5grlk9nu8ltc2r94bbslj06&refresh_token=' + refresh_token
+		})
+		.then(response => response.json())
+		.then(data => {
+			id_token = data['id_token'];
+			updateTable();
+		})
+		.catch(err => {
+				console.log(err);
+		})
+	}	
+	// Attempt to grab the authorization code from the header and retrieves the refresh and id tokens. Assumes that there are GET parameters.
 	else{
-		if(document.cookie.length === 0){
-			document.cookie = "Authorization=" + id_token + "; expires=" + new Date(id_data['exp'] * 1000).toUTCString();
-		}
+		params = window.location.href.split('?')[1];
+		auth_code = params.split('=')[1];
 		
-		document.getElementById('checkinButton').hidden = false;
-		document.getElementById('checkinTable').innerHTML = '<b>Fetching the table now!</b>'
-		
-		document.getElementById('login').outerHTML = '<a class="button" id="login" href="https://auth.nsec-checkin.brndjsmith.net/logout?client_id=jl5grlk9nu8ltc2r94bbslj06&logout_uri=https://nsec-checkin.brndjsmith.net/index.html">Logout</a>'
-		
-		updateTable();
-		var interval = setInterval(updateTable, 10000);
+		// Fetch the refresh_token using the authorization code
+		fetch('https://auth.nsec-checkin.brndjsmith.net/oauth2/token', 
+		{
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+        },
+		body: 'grant_type=authorization_code&client_id=jl5grlk9nu8ltc2r94bbslj06&code=' + auth_code + '&redirect_uri=https://nsec-checkin.brndjsmith.net/index.html'
+		})
+		.then(response => response.json())
+		.then(data => {
+			refresh_token = data['refresh_token'];
+			id_token = data['id_token'];
+			
+			// Adds the refresh token as a cookie with an expiration date 29 days from now
+			document.cookie = "refresh_token=" + refresh_token + "; expires=" + (new Date((new Date().setDate(new Date().getDate() + 30)))).toUTCString();
+			
+			updateTable();
+		})
+		.catch(err => {
+				console.log(err);
+		})
 	}
+	
+	document.getElementById('checkinButton').hidden = false;
+	document.getElementById('checkinTable').innerHTML = '<b>Fetching the table now!</b>'
+	
+	document.getElementById('login').outerHTML = '<a class="button" id="login" href="https://auth.nsec-checkin.brndjsmith.net/logout?client_id=jl5grlk9nu8ltc2r94bbslj06&logout_uri=https://nsec-checkin.brndjsmith.net/index.html">Logout</a>'
 }
 else{
 	document.getElementById('checkinTable').innerHTML = banner_motd;
@@ -160,7 +193,7 @@ function checkIn(){
 		headers: {
             'Authorization': id_token
         },
-		body: '{"name":"' + id_data['name'] + '"}'
+		body: ''
 		})
 		.then(response => response.json())
 		.then(data => {
@@ -179,7 +212,7 @@ function logout(){
 document.getElementById('login').addEventListener('click', function (event) {
   // Do something before following the link 
   if (document.getElementById('login').innerHTML === 'Logout'){
-	document.cookie = "Authorization= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+	document.cookie = "refresh_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
   }
   // Get url from the target element (<a>) href attribute
   var url = event.target.href;
